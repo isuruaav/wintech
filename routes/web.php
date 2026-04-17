@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\PaperController as AdminPaperController;
 use App\Http\Controllers\Admin\DownloadController;
 use App\Http\Controllers\Admin\EnquiryController;
 use App\Http\Controllers\Admin\GradeClassAdminController;
+use App\Http\Controllers\Admin\TeacherAdminController;
 
 // =====================
 // PUBLIC ROUTES
@@ -75,6 +76,14 @@ Route::post('/admin/logout', [AdminLoginController::class, 'logout'])->name('adm
 // ADMIN PANEL
 // =====================
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Teachers
+    Route::get('teachers',                    [TeacherAdminController::class, 'index'])->name('teachers.index');
+    Route::get('teachers/create',             [TeacherAdminController::class, 'create'])->name('teachers.create');
+    Route::post('teachers',                   [TeacherAdminController::class, 'store'])->name('teachers.store');
+    Route::get('teachers/{teacher}/edit',     [TeacherAdminController::class, 'edit'])->name('teachers.edit');
+    Route::put('teachers/{teacher}',          [TeacherAdminController::class, 'update'])->name('teachers.update');
+    Route::patch('teachers/{teacher}/toggle', [TeacherAdminController::class, 'toggleStatus'])->name('teachers.toggle');
+    Route::delete('teachers/{teacher}',       [TeacherAdminController::class, 'destroy'])->name('teachers.destroy');
 
     // Grade Classes
     Route::get('classes',                        [GradeClassAdminController::class, 'index'])->name('classes.index');

@@ -1,3 +1,5 @@
+
+
 @extends('layouts.app')
 @section('title', 'Home')
 
@@ -217,51 +219,28 @@
     </div>
 </section>
 
-{{-- ===== GRADE CLASSES ===== --}}
-<section class="py-20 relative overflow-hidden" style="background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);">
-    <div class="absolute top-0 right-0 w-96 h-96 bg-navy-200/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12 reveal">
-            <span class="inline-block bg-navy-900 text-gold-400 text-xs font-bold px-4 py-2 rounded-full uppercase tracking-wider mb-4">School Classes</span>
-            <h2 class="text-4xl font-extrabold text-navy-900 mb-4">Grade <span class="text-gold-500">Classes</span></h2>
-            <p class="text-slate-500 max-w-xl mx-auto">ICT, English, Mathematics and Tamil for Grade 6 to A/L students.</p>
+{{-- ══ GRADE CLASSES BANNER ════════════════════════════════════ --}}
+<section class="py-16" style="background: linear-gradient(135deg, #0d1f3c 0%, #162f60 100%);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-white mb-3">Grade Classes</h2>
+            <p class="text-white/50">Supporting students from Grade 6 through A/L in English, ICT, Mathematics &amp; Science</p>
         </div>
-
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            @foreach($gradeClasses as $class)
-            <a href="{{ route('grade.show', $class) }}"
-               class="group card-hover bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:border-navy-300 reveal">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="bg-navy-900 text-white text-xs font-bold px-3 py-1.5 rounded-xl">{{ $class->grade }}</span>
-                    <span class="w-8 h-8 bg-slate-100 group-hover:bg-navy-100 rounded-lg flex items-center justify-center transition-colors">
-                        <i class="fa-solid fa-chevron-right text-slate-400 group-hover:text-navy-600 text-xs transition-colors"></i>
-                    </span>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            @foreach(['English' => 'fa-solid fa-language', 'ICT' => 'fa-solid fa-computer', 'Mathematics' => 'fa-solid fa-calculator', 'Science' => 'fa-solid fa-flask'] as $subject => $icon)
+            <a href="{{ route('grade.index', ['subject' => $subject]) }}"
+               class="group card-hover bg-white/10 border border-white/20 rounded-2xl p-5 text-center hover:bg-white/20 transition-all scroll-animate">
+                <div class="w-12 h-12 mx-auto bg-gold-500/20 group-hover:bg-gold-500 rounded-xl flex items-center justify-center mb-3 transition-colors">
+                    <i class="{{ $icon }} text-xl text-gold-400 group-hover:text-navy-900 transition-colors"></i>
                 </div>
-                <h3 class="font-extrabold text-navy-900 text-base mb-1">{{ $class->subject }}</h3>
-                @if($class->teacher)
-                <p class="text-xs text-slate-400 mb-3 flex items-center gap-1">
-                    <i class="fa-solid fa-user"></i>{{ $class->teacher }}
-                </p>
-                @endif
-                @if($class->schedules->first())
-                <p class="text-xs text-navy-600 bg-navy-50 rounded-lg px-3 py-2 mb-3 flex items-center gap-1.5">
-                    <i class="fa-regular fa-calendar"></i>
-                    {{ $class->schedules->first()->day }}
-                </p>
-                @endif
-                @if($class->monthly_fee)
-                <p class="font-extrabold text-navy-900 text-lg mt-2">
-                    Rs. {{ number_format($class->monthly_fee) }}
-                    <span class="text-slate-400 font-normal text-xs">/month</span>
-                </p>
-                @endif
+                <h3 class="text-white font-semibold text-sm">{{ $subject }}</h3>
+                <p class="text-white/40 text-xs mt-1">Grade 6 – A/L</p>
             </a>
             @endforeach
         </div>
-
-        <div class="text-center mt-10">
-            <a href="{{ route('grade.index') }}" class="btn-primary text-base px-8 py-3">
-                View All Classes <i class="fa-solid fa-arrow-right ml-1"></i>
+        <div class="text-center mt-8">
+            <a href="{{ route('grade.index') }}" class="btn-gold">
+                <i class="fa-solid fa-graduation-cap"></i> View All Classes
             </a>
         </div>
     </div>
@@ -310,7 +289,55 @@
     </div>
 </section>
 @endif
-
+{{-- ══ OUR TEACHERS ═══════════════════════════════════════════ --}}
+@if(isset($teachers) && $teachers->count())
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-navy-900 section-title inline-block mb-2">Meet Our Teachers</h2>
+            <p class="text-slate-500 mt-4">Experienced and dedicated educators committed to your success</p>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @foreach($teachers as $teacher)
+            <div class="card-hover bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden scroll-animate text-center">
+                {{-- Photo --}}
+                <div class="relative">
+                    @if($teacher->photo)
+                    <img src="{{ Storage::url($teacher->photo) }}"
+                         alt="{{ $teacher->name }}"
+                         class="w-full h-52 object-cover object-top">
+                    @else
+                    <div class="w-full h-52 bg-gradient-to-br from-navy-800 to-navy-950 flex items-center justify-center">
+                        <i class="fa-solid fa-user text-6xl text-white/20"></i>
+                    </div>
+                    @endif
+                    {{-- Subject badge --}}
+                    @if($teacher->subjects)
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-navy-950/90 to-transparent px-4 py-3">
+                        <p class="text-gold-400 text-xs font-semibold">{{ $teacher->subjects }}</p>
+                    </div>
+                    @endif
+                </div>
+                {{-- Info --}}
+                <div class="p-5">
+                    <h3 class="font-bold text-navy-900 text-base mb-1">{{ $teacher->name }}</h3>
+                    @if($teacher->bio)
+                    <p class="text-slate-500 text-xs leading-relaxed line-clamp-2 mb-3">{{ $teacher->bio }}</p>
+                    @endif
+                    <div class="flex items-center justify-center gap-3 text-xs text-slate-400">
+                        @if($teacher->phone)
+                        <a href="tel:{{ $teacher->phone }}" class="flex items-center gap-1 hover:text-navy-700 transition-colors">
+                            <i class="fa-solid fa-phone text-navy-300"></i> {{ $teacher->phone }}
+                        </a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
 {{-- ===== WHY WINTECH ===== --}}
 <section class="py-20 relative overflow-hidden bg-navy-950">
     {{-- Background Pattern --}}

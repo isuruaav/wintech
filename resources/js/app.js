@@ -143,13 +143,29 @@ document.querySelectorAll('[data-confirm]').forEach(btn => {
 });
 
 // ===== TABS =====
-document.querySelectorAll('[data-tab-target]').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const group = btn.closest('[data-tabs]');
-        if (!group) return;
-        group.querySelectorAll('[data-tab-target]').forEach(b => b.classList.remove('active', 'border-gold-500', 'text-navy-900'));
-        group.querySelectorAll('[data-tab-content]').forEach(c => c.classList.add('hidden'));
-        btn.classList.add('active', 'border-gold-500', 'text-navy-900');
-        document.getElementById(btn.dataset.tabTarget)?.classList.remove('hidden');
+// ── Tabs Component ─────────────────────────────────────────
+    document.querySelectorAll('[data-tab-group]').forEach(group => {
+        const tabs   = group.querySelectorAll('[data-tab]');
+        const panels = group.querySelectorAll('[data-tab-panel]');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.getAttribute('data-tab');
+
+                // Reset all tabs
+                tabs.forEach(t => {
+                    t.classList.remove('bg-navy-900', 'text-white', 'border-navy-900');
+                    t.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
+                });
+
+                // Activate clicked tab
+                tab.classList.add('bg-navy-900', 'text-white', 'border-navy-900');
+                tab.classList.remove('bg-white', 'text-slate-600', 'border-slate-200');
+
+                // Show matching panel
+                panels.forEach(p => p.classList.add('hidden'));
+                const panel = group.querySelector(`[data-tab-panel="${target}"]`);
+                if (panel) panel.classList.remove('hidden');
+            });
+        });
     });
-});

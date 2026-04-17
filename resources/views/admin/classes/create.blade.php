@@ -29,10 +29,20 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="sm:col-span-2">
-                    <label class="block text-sm font-semibold text-navy-900 mb-1.5">Teacher Name *</label>
-                    <input type="text" name="teacher" value="{{ old('teacher') }}" class="form-input" required placeholder="e.g. Mr. Kasun Perera">
-                </div>
+          <div class="sm:col-span-2">
+    <label class="block text-sm font-semibold text-navy-900 mb-1.5">Teacher *</label>
+    <select name="teacher_id" class="form-input" required>
+        <option value="">Select Teacher</option>
+        @foreach($teachers as $t)
+        <option value="{{ $t->id }}" {{ old('teacher_id') == $t->id ? 'selected' : '' }}>
+            {{ $t->name }} @if($t->subjects) — {{ $t->subjects }} @endif
+        </option>
+        @endforeach
+    </select>
+    <p class="text-xs text-slate-400 mt-1">
+        Teacher නැද්ද? <a href="{{ route('admin.teachers.create') }}" target="_blank" class="text-navy-600 hover:underline">Add Teacher →</a>
+    </p>
+</div>
                 <div>
                     <label class="block text-sm font-semibold text-navy-900 mb-1.5">Teaching Medium *</label>
                     <select name="medium" class="form-input" required>

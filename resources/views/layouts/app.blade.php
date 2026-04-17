@@ -183,10 +183,14 @@
 
             <div>
                 <div class="flex items-center gap-3 mb-4">
-                    <div class="w-9 h-9 bg-gold-500 rounded-lg flex items-center justify-center">
-                        <i class="fa-solid fa-microchip text-navy-900"></i>
+                    <div class="w-9 h-9 flex items-center justify-center">
+                        <!-- Logo Image -->
+    <img src="{{ asset('images/logo.png') }}" 
+         alt="WinTech Logo" 
+         class="w-10 h-10 object-contain">
                     </div>
                     <div>
+                        
                         <p class="font-extrabold text-base leading-none">WinTech</p>
                         <p class="text-gold-400 text-xs">Institute</p>
                     </div>
@@ -244,8 +248,8 @@
         </div>
 
         <div class="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-white/40">
-            <p>&copy; {{ date('Y') }} WinTech Institute. All rights reserved.</p>
-            <p>Chathuranga Dissanayaka</p>
+   <p>&copy; {{ date('Y') }} ISD Tech Hub (Pvt) Ltd. All rights reserved.</p>
+            
         </div>
     </div>
 </footer>

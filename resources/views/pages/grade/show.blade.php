@@ -15,7 +15,7 @@
                 <div class="bg-gradient-to-r from-navy-800 to-navy-950 px-6 py-8 text-white">
                     <span class="bg-gold-500/20 text-gold-400 text-xs font-bold px-3 py-1 rounded-full border border-gold-500/30 mb-3 inline-block">{{ $class->grade }}</span>
                     <h1 class="text-2xl font-extrabold mb-1">{{ $class->subject }}</h1>
-                    @if($class->teacher)<p class="text-white/70 text-sm mb-1"><i class="fa-solid fa-chalkboard-user mr-1"></i>{{ $class->teacher }}</p>@endif
+           @if($class->teacher_name)<p class="text-white/70 text-sm mb-1"><i class="fa-solid fa-chalkboard-user mr-1"></i>{{ $class->teacher_name }}</p>@endif
                     @if($class->medium)
                     <span class="inline-block text-xs font-semibold px-2.5 py-1 rounded-full mt-1
                         {{ $class->medium === 'english' ? 'bg-emerald-500/20 text-emerald-300' : ($class->medium === 'sinhala' ? 'bg-amber-500/20 text-amber-300' : 'bg-sky-500/20 text-sky-300') }}">

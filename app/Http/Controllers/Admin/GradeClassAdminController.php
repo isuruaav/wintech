@@ -8,17 +8,31 @@ use App\Models\ClassSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Teacher;
 
 class GradeClassAdminController extends Controller
 {
     private array $grades = [
-        'Grade 6', 'Grade 7', 'Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'O/L', 'A/L',
+        'Grade 6',
+        'Grade 7',
+        'Grade 8',
+        'Grade 9',
+        'Grade 10',
+        'Grade 11',
+        'O/L',
+        'A/L',
     ];
 
     private array $subjects = ['English', 'ICT', 'Mathematics', 'Science'];
 
     private array $days = [
-        'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday',
     ];
 
     public function index(Request $request)
@@ -44,8 +58,9 @@ class GradeClassAdminController extends Controller
         $grades   = $this->grades;
         $subjects = $this->subjects;
         $days     = $this->days;
+        $teachers = Teacher::where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
 
-        return view('admin.classes.create', compact('grades', 'subjects', 'days'));
+        return view('admin.classes.create', compact('grades', 'subjects', 'days', 'teachers'));
     }
 
     public function store(Request $request)
@@ -53,7 +68,7 @@ class GradeClassAdminController extends Controller
         $data = $request->validate([
             'grade'       => 'required|string|max:50',
             'subject'     => 'required|string|max:100',
-            'teacher'     => 'required|string|max:200',
+            'teacher_id' => 'nullable|exists:teachers,id',
             'medium'      => 'required|in:english,sinhala,both',
             'mode'        => 'required|in:physical,online,both',
             'monthly_fee' => 'nullable|numeric|min:0',
@@ -90,8 +105,9 @@ class GradeClassAdminController extends Controller
         $subjects  = $this->subjects;
         $days      = $this->days;
         $schedules = $class->schedules()->get();
+        $teachers  = Teacher::where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
 
-        return view('admin.classes.edit', compact('class', 'grades', 'subjects', 'days', 'schedules'));
+        return view('admin.classes.edit', compact('class', 'grades', 'subjects', 'days', 'schedules', 'teachers'));
     }
 
     public function update(Request $request, GradeClass $class)
@@ -99,7 +115,7 @@ class GradeClassAdminController extends Controller
         $data = $request->validate([
             'grade'       => 'required|string|max:50',
             'subject'     => 'required|string|max:100',
-            'teacher'     => 'required|string|max:200',
+            'teacher_id' => 'nullable|exists:teachers,id',
             'medium'      => 'required|in:english,sinhala,both',
             'mode'        => 'required|in:physical,online,both',
             'monthly_fee' => 'nullable|numeric|min:0',

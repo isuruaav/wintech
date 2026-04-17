@@ -3,24 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Models\OnlineClass;
+use App\Models\GradeClass;
+use Illuminate\Http\Request;
 
 class OnlineClassController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $live     = OnlineClass::where('is_active', true)
-            ->where('scheduled_at', '<=', now())
-            ->where('scheduled_at', '>=', now()->subHours(3))
-            ->orderBy('scheduled_at')->get();
+        $liveNow = OnlineClass::with('gradeClass')
+            ->where('status', 'live')
+            ->get();
 
-        $upcoming = OnlineClass::where('is_active', true)
-            ->where('scheduled_at', '>', now())
-            ->orderBy('scheduled_at')->get();
+        $gradeClasses = GradeClass::where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
 
-        $past     = OnlineClass::where('is_active', true)
-            ->where('scheduled_at', '<', now()->subHours(3))
-            ->orderByDesc('scheduled_at')->take(10)->get();
+        $query = OnlineClass::with('gradeClass')
+            ->whereIn('status', ['upcoming', 'live'])
+            ->where('scheduled_at', '>=', now());
 
-        return view('pages.online-class.index', compact('live', 'upcoming', 'past'));
+        if ($request->filled('grade_class')) {
+            $query->where('grade_class_id', $request->grade_class);
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $classes = $query->orderBy('scheduled_at')->paginate(12);
+
+        return view('pages.online-class.index', compact('classes', 'liveNow', 'gradeClasses'));
     }
 }

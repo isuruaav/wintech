@@ -19,8 +19,11 @@
 
         {{-- Logo --}}
         <div class="flex items-center gap-3 px-5 py-5 border-b border-white/10">
-            <div class="w-9 h-9 bg-gold-500 rounded-lg flex items-center justify-center shrink-0">
-                <i class="fa-solid fa-microchip text-navy-900"></i>
+            <div class="w-9 h-9 flex items-center justify-center shrink-0">
+          <!-- Logo Image -->
+    <img src="{{ asset('images/logo.png') }}" 
+         alt="WinTech Logo" 
+         class="w-10 h-10 object-contain">
             </div>
             <div>
                 <p class="text-white font-extrabold leading-none">WinTech</p>
@@ -40,6 +43,9 @@
             </a>
             <a href="{{ route('admin.classes.index') }}" class="sidebar-link {{ request()->routeIs('admin.classes*') ? 'active' : '' }}">
     <i class="fa-solid fa-chalkboard"></i> Grade Classes
+</a>
+<a href="{{ route('admin.teachers.index') }}" class="sidebar-link {{ request()->routeIs('admin.teachers*') ? 'active' : '' }}">
+    <i class="fa-solid fa-chalkboard-user"></i> Teachers
 </a>
             <a href="{{ route('admin.students.index') }}"     class="sidebar-link {{ request()->routeIs('admin.students*') ? 'active' : '' }}">
                 <i class="fa-solid fa-users w-5 text-center"></i> Students

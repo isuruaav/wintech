@@ -11,7 +11,7 @@ class GradeClass extends Model
 
     protected $fillable = [
         'grade', 'subject', 'slug', 'description',
-        'teacher', 'thumbnail', 'monthly_fee', 'mode', 'medium',
+        'teacher', 'teacher_id', 'thumbnail', 'monthly_fee', 'mode', 'medium',
         'is_active', 'sort_order',
     ];
 
@@ -19,6 +19,11 @@ class GradeClass extends Model
         'is_active'   => 'boolean',
         'monthly_fee' => 'decimal:2',
     ];
+
+    public function teacher()
+    {
+        return $this->belongsTo(Teacher::class);
+    }
 
     public function schedules()
     {
@@ -43,6 +48,11 @@ class GradeClass extends Model
     public function getFullNameAttribute(): string
     {
         return $this->grade . ' — ' . $this->subject;
+    }
+
+    public function getTeacherNameAttribute(): string
+    {
+        return $this->teacher?->name ?? $this->attributes['teacher'] ?? '';
     }
 
     public function getRouteKeyName(): string
