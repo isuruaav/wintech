@@ -108,7 +108,9 @@
                 </button>
                 @auth
                     @if(Auth::user()->isStudent())
-                        <a href="{{ route('student.results') }}" class="btn-gold py-2 px-4 text-xs">My Results</a>
+                       <a href="{{ route('results.index') }}" class="...">
+    <i class="fa-solid fa-file-circle-check"></i> My Results
+</a>
                         <form action="{{ route('logout') }}" method="POST" class="inline">@csrf
                             <button class="nav-link px-3 py-2 text-xs">Logout</button>
                         </form>

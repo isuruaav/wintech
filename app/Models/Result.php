@@ -7,43 +7,28 @@ use Illuminate\Database\Eloquent\Model;
 class Result extends Model
 {
     protected $fillable = [
-        'exam_id', 'student_id', 'marks_obtained', 'grade', 'remarks',
+        'user_id', 'exam_id', 'marks', 'grade_letter', 'status', 'remarks',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function exam()
     {
         return $this->belongsTo(Exam::class);
     }
 
-    public function student()
-    {
-        return $this->belongsTo(User::class, 'student_id');
-    }
-
-    public function getPercentageAttribute(): float
-    {
-        if (!$this->exam || $this->exam->total_marks == 0) return 0;
-        return round(($this->marks_obtained / $this->exam->total_marks) * 100, 1);
-    }
-
-    public function getLetterGradeAttribute(): string
-    {
-        $p = $this->percentage;
-        if ($p >= 75) return 'A';
-        if ($p >= 65) return 'B';
-        if ($p >= 55) return 'C';
-        if ($p >= 35) return 'S';
-        return 'F';
-    }
-
     public function getGradeColorAttribute(): string
     {
-        return match($this->letter_grade) {
-            'A' => 'badge-active',
-            'B' => 'bg-blue-100 text-blue-700',
-            'C' => 'badge-pending',
-            'S' => 'bg-purple-100 text-purple-700',
-            default => 'badge-inactive',
+        return match($this->grade_letter) {
+            'A'     => 'text-emerald-600 bg-emerald-50',
+            'B'     => 'text-blue-600 bg-blue-50',
+            'C'     => 'text-sky-600 bg-sky-50',
+            'S'     => 'text-amber-600 bg-amber-50',
+            'W'     => 'text-red-600 bg-red-50',
+            default => 'text-slate-600 bg-slate-50',
         };
     }
 }

@@ -55,7 +55,10 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register'])->name('register.post');
 });
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
+// Student Results
+Route::get('/results', [App\Http\Controllers\ResultController::class, 'index'])
+    ->name('results.index')
+    ->middleware('auth');
 // =====================
 // STUDENT AREA
 // =====================
@@ -99,7 +102,23 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('classes/{class}/schedule/{schedule}', [GradeClassAdminController::class, 'removeSchedule'])->name('classes.schedule.remove');
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // Exams Admin
+    Route::prefix('admin/exams')->name('admin.exams.')->middleware(['auth', 'role:admin'])->group(function () {
+        Route::get('/',                    [App\Http\Controllers\Admin\ExamAdminController::class, 'index'])->name('index');
+        Route::get('/create',              [App\Http\Controllers\Admin\ExamAdminController::class, 'create'])->name('create');
+        Route::post('/',                   [App\Http\Controllers\Admin\ExamAdminController::class, 'store'])->name('store');
+        Route::get('/{exam}/edit',         [App\Http\Controllers\Admin\ExamAdminController::class, 'edit'])->name('edit');
+        Route::put('/{exam}',              [App\Http\Controllers\Admin\ExamAdminController::class, 'update'])->name('update');
+        Route::delete('/{exam}',           [App\Http\Controllers\Admin\ExamAdminController::class, 'destroy'])->name('destroy');
+        Route::patch('/{exam}/publish',    [App\Http\Controllers\Admin\ExamAdminController::class, 'togglePublish'])->name('toggle-publish');
+        Route::get('/{exam}/results',      [App\Http\Controllers\Admin\ResultAdminController::class, 'index'])->name('results');
+        Route::post('/{exam}/results',     [App\Http\Controllers\Admin\ResultAdminController::class, 'store'])->name('results.store');  // alias
+        Route::delete('/{exam}/results/{result}', [App\Http\Controllers\Admin\ResultAdminController::class, 'destroy'])->name('results.destroy');
+    });
 
+    // Results store shortcut
+    Route::post('admin/results/{exam}',   [App\Http\Controllers\Admin\ResultAdminController::class, 'store'])->name('admin.results.store')->middleware(['auth', 'role:admin']);
+    Route::delete('admin/results/{exam}/{result}', [App\Http\Controllers\Admin\ResultAdminController::class, 'destroy'])->name('admin.results.destroy')->middleware(['auth', 'role:admin']);
     // Courses
     Route::resource('courses', AdminCourseController::class)->except(['show']);
 
@@ -117,15 +136,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Online Classes
     Route::resource('online-classes', AdminOnlineClassController::class)->except(['show']);
-// Online Classes Admin
-Route::prefix('admin/online-classes')->name('admin.online-classes.')->middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/',           [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'index'])->name('index');
-    Route::get('/create',     [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'create'])->name('create');
-    Route::post('/',          [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'store'])->name('store');
-    Route::get('/{onlineClass}/edit',    [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'edit'])->name('edit');
-    Route::put('/{onlineClass}',         [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'update'])->name('update');
-    Route::delete('/{onlineClass}',      [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'destroy'])->name('destroy');
-});
+    // Online Classes Admin
+    Route::prefix('admin/online-classes')->name('admin.online-classes.')->middleware(['auth', 'role:admin'])->group(function () {
+        Route::get('/',           [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'index'])->name('index');
+        Route::get('/create',     [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'create'])->name('create');
+        Route::post('/',          [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'store'])->name('store');
+        Route::get('/{onlineClass}/edit',    [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'edit'])->name('edit');
+        Route::put('/{onlineClass}',         [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'update'])->name('update');
+        Route::delete('/{onlineClass}',      [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'destroy'])->name('destroy');
+    });
     // Gallery
     Route::resource('gallery', AdminGalleryController::class)->except(['show']);
 
