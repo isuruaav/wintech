@@ -3,170 +3,89 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\OnlineClass;
 use App\Models\GradeClass;
-use App\Models\ClassSchedule;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use App\Models\Teacher;
 
-class GradeClassAdminController extends Controller
+class OnlineClassAdminController extends Controller
 {
-    private array $grades = [
-        'Grade 6',
-        'Grade 7',
-        'Grade 8',
-        'Grade 9',
-        'Grade 10',
-        'Grade 11',
-        'O/L',
-        'A/L',
-    ];
-
-    private array $subjects = ['English', 'ICT', 'Mathematics', 'Science'];
-
-    private array $days = [
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday',
-        'Sunday',
-    ];
-
     public function index(Request $request)
     {
-        $query = GradeClass::with('schedules');
+        $query = OnlineClass::with('gradeClass')->latest('scheduled_at');
 
-        if ($request->filled('subject')) {
-            $query->where('subject', $request->subject);
-        }
-        if ($request->filled('grade')) {
-            $query->where('grade', $request->grade);
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
 
-        $classes  = $query->orderBy('sort_order')->orderBy('subject')->get();
-        $subjects = $this->subjects;
-        $grades   = $this->grades;
-
-        return view('admin.classes.index', compact('classes', 'subjects', 'grades'));
+        $classes = $query->paginate(20);
+        return view('admin.online-classes.index', compact('classes'));
     }
 
     public function create()
     {
-        $grades   = $this->grades;
-        $subjects = $this->subjects;
-        $days     = $this->days;
-        $teachers = Teacher::where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
-
-        return view('admin.classes.create', compact('grades', 'subjects', 'days', 'teachers'));
+        $gradeClasses = GradeClass::where('is_active', true)->orderBy('subject')->orderBy('grade')->get();
+        return view('admin.online-classes.create', compact('gradeClasses'));
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'grade'       => 'required|string|max:50',
-            'subject'     => 'required|string|max:100',
-            'teacher_id' => 'nullable|exists:teachers,id',
-            'medium'      => 'required|in:english,sinhala,both',
-            'mode'        => 'required|in:physical,online,both',
-            'monthly_fee' => 'nullable|numeric|min:0',
-            'description' => 'nullable|string',
-            'thumbnail'   => 'nullable|image|max:2048',
-            'sort_order'  => 'integer|min:0',
-            'is_active'   => 'boolean',
+            'title'            => 'required|string|max:255',
+            'description'      => 'nullable|string',
+            'platform'         => 'required|in:zoom,google_meet,teams,other',
+            'join_url'         => 'required|url',
+            'scheduled_at'     => 'required|date',
+            'duration_minutes' => 'required|integer|min:15|max:480',
+            'status'           => 'required|in:upcoming,live,ended',
+            'grade_class_id'   => 'nullable|exists:grade_classes,id',
+            'is_active'        => 'boolean',
         ]);
 
-        $data['slug']      = Str::slug($data['grade'] . '-' . $data['subject']) . '-' . Str::random(4);
         $data['is_active'] = $request->boolean('is_active', true);
 
-        if ($request->hasFile('thumbnail')) {
-            $data['thumbnail'] = $request->file('thumbnail')->store('classes', 'public');
-        }
+        OnlineClass::create($data);
 
-        $schedules = $request->input('schedules', []);
-        unset($data['schedules']);
-
-        $gradeClass = GradeClass::create($data);
-
-        foreach ($schedules as $schedule) {
-            if (!empty($schedule['day'])) {
-                $gradeClass->schedules()->create(array_merge($schedule, ['is_active' => true]));
-            }
-        }
-
-        return redirect()->route('admin.classes.index')->with('success', 'Grade class created successfully.');
+        return redirect()->route('admin.online-classes.index')
+            ->with('success', 'Online class added successfully!');
     }
 
-    public function edit(GradeClass $class)
+    public function edit(OnlineClass $onlineClass)
     {
-        $grades    = $this->grades;
-        $subjects  = $this->subjects;
-        $days      = $this->days;
-        $schedules = $class->schedules()->get();
-        $teachers  = Teacher::where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
-
-        return view('admin.classes.edit', compact('class', 'grades', 'subjects', 'days', 'schedules', 'teachers'));
+        $gradeClasses = GradeClass::where('is_active', true)->orderBy('subject')->orderBy('grade')->get();
+        return view('admin.online-classes.edit', compact('onlineClass', 'gradeClasses'));
     }
 
-    public function update(Request $request, GradeClass $class)
+    public function update(Request $request, OnlineClass $onlineClass)
     {
         $data = $request->validate([
-            'grade'       => 'required|string|max:50',
-            'subject'     => 'required|string|max:100',
-            'teacher_id' => 'nullable|exists:teachers,id',
-            'medium'      => 'required|in:english,sinhala,both',
-            'mode'        => 'required|in:physical,online,both',
-            'monthly_fee' => 'nullable|numeric|min:0',
-            'description' => 'nullable|string',
-            'thumbnail'   => 'nullable|image|max:2048',
-            'sort_order'  => 'integer|min:0',
-            'is_active'   => 'boolean',
+            'title'            => 'required|string|max:255',
+            'description'      => 'nullable|string',
+            'platform'         => 'required|in:zoom,google_meet,teams,other',
+            'join_url'         => 'required|url',
+            'scheduled_at'     => 'required|date',
+            'duration_minutes' => 'required|integer|min:15|max:480',
+            'status'           => 'required|in:upcoming,live,ended',
+            'grade_class_id'   => 'nullable|exists:grade_classes,id',
+            'is_active'        => 'boolean',
         ]);
 
-        $data['is_active'] = $request->boolean('is_active');
+        $data['is_active'] = $request->boolean('is_active', true);
 
-        if ($request->hasFile('thumbnail')) {
-            if ($class->thumbnail) Storage::disk('public')->delete($class->thumbnail);
-            $data['thumbnail'] = $request->file('thumbnail')->store('classes', 'public');
-        }
+        $onlineClass->update($data);
 
-        $class->update($data);
-
-        return redirect()->route('admin.classes.index')->with('success', 'Grade class updated successfully.');
+        return redirect()->route('admin.online-classes.index')
+            ->with('success', 'Online class updated successfully!');
     }
 
-    public function toggleStatus(GradeClass $class)
+    public function destroy(OnlineClass $onlineClass)
     {
-        $class->update(['is_active' => !$class->is_active]);
+        $onlineClass->delete();
+        return back()->with('success', 'Online class deleted.');
+    }
+
+    public function toggleStatus(OnlineClass $onlineClass)
+    {
+        $onlineClass->update(['is_active' => !$onlineClass->is_active]);
         return back()->with('success', 'Status updated.');
-    }
-
-    public function destroy(GradeClass $class)
-    {
-        if ($class->thumbnail) Storage::disk('public')->delete($class->thumbnail);
-        $class->delete();
-        return back()->with('success', 'Grade class deleted.');
-    }
-
-    public function addSchedule(Request $request, GradeClass $class)
-    {
-        $data = $request->validate([
-            'day'        => 'required|in:' . implode(',', $this->days),
-            'start_time' => 'required|date_format:H:i',
-            'end_time'   => 'required|date_format:H:i',
-            'venue'      => 'nullable|string|max:200',
-        ]);
-
-        $class->schedules()->create(array_merge($data, ['is_active' => true]));
-
-        return back()->with('success', 'Schedule added.');
-    }
-
-    public function removeSchedule(GradeClass $class, ClassSchedule $schedule)
-    {
-        $schedule->delete();
-        return back()->with('success', 'Schedule removed.');
     }
 }

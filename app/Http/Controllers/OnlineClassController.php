@@ -15,16 +15,17 @@ class OnlineClassController extends Controller
             ->get();
 
         $gradeClasses = GradeClass::where('is_active', true)
-            ->orderBy('sort_order')
+            ->orderBy('subject')
+            ->orderBy('grade')
             ->get();
 
         $query = OnlineClass::with('gradeClass')
-            ->whereIn('status', ['upcoming', 'live'])
-            ->where('scheduled_at', '>=', now());
+            ->whereIn('status', ['upcoming', 'live']);
 
         if ($request->filled('grade_class')) {
             $query->where('grade_class_id', $request->grade_class);
         }
+
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }

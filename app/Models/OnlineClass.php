@@ -2,47 +2,36 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class OnlineClass extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'grade_class_id', 'title', 'description',
-        'join_url', 'platform', 'scheduled_at',
-        'duration_minutes', 'is_active',
+        'title', 'description', 'platform', 'join_url',
+        'scheduled_at', 'duration_minutes', 'status',
+        'grade_class_id', 'is_active',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'scheduled_at' => 'datetime',
-            'is_active'    => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'scheduled_at' => 'datetime',
+        'is_active'    => 'boolean',
+    ];
 
     public function gradeClass()
     {
         return $this->belongsTo(GradeClass::class);
     }
 
-    public function getIsLiveAttribute(): bool
-    {
-        $now = now();
-        $end = $this->scheduled_at->copy()->addMinutes($this->duration_minutes);
-        return $now->between($this->scheduled_at, $end);
-    }
-
-    public function getIsUpcomingAttribute(): bool
-    {
-        return $this->scheduled_at->isFuture();
-    }
-
-    public function getPlatformIconAttribute(): string
+    public function getPlatformIconAttribute()
     {
         return match($this->platform) {
-            'zoom'     => 'fa-video',
-            'facebook' => 'fa-brands fa-facebook',
-            default    => 'fa-brands fa-google',
+            'zoom'         => 'fa-video',
+            'google_meet'  => 'fa-video',
+            'teams'        => 'fa-video',
+            default        => 'fa-video',
         };
     }
 }

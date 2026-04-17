@@ -76,6 +76,8 @@ Route::post('/admin/logout', [AdminLoginController::class, 'logout'])->name('adm
 // ADMIN PANEL
 // =====================
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+
+
     // Teachers
     Route::get('teachers',                    [TeacherAdminController::class, 'index'])->name('teachers.index');
     Route::get('teachers/create',             [TeacherAdminController::class, 'create'])->name('teachers.create');
@@ -115,7 +117,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Online Classes
     Route::resource('online-classes', AdminOnlineClassController::class)->except(['show']);
-
+// Online Classes Admin
+Route::prefix('admin/online-classes')->name('admin.online-classes.')->middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/',           [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'index'])->name('index');
+    Route::get('/create',     [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'create'])->name('create');
+    Route::post('/',          [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'store'])->name('store');
+    Route::get('/{onlineClass}/edit',    [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'edit'])->name('edit');
+    Route::put('/{onlineClass}',         [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'update'])->name('update');
+    Route::delete('/{onlineClass}',      [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'destroy'])->name('destroy');
+});
     // Gallery
     Route::resource('gallery', AdminGalleryController::class)->except(['show']);
 

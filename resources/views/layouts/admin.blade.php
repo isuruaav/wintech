@@ -53,9 +53,11 @@
             <a href="{{ route('admin.exams.index') }}"        class="sidebar-link {{ request()->routeIs('admin.exams*') ? 'active' : '' }}">
                 <i class="fa-solid fa-file-pen w-5 text-center"></i> Exams & Results
             </a>
-            <a href="{{ route('admin.online-classes.index') }}" class="sidebar-link {{ request()->routeIs('admin.online-classes*') ? 'active' : '' }}">
-                <i class="fa-solid fa-video w-5 text-center"></i> Online Classes
-            </a>
+    <a href="{{ route('admin.online-classes.index') }}"
+   class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.online-classes.*') ? 'bg-navy-800 text-white' : 'text-slate-300 hover:bg-navy-800/60 hover:text-white' }}">
+    <i class="fa-solid fa-video w-5 text-center"></i>
+    <span>Online Classes</span>
+</a>
 
             <p class="text-white/30 text-xs font-semibold uppercase px-3 pt-4 pb-1 tracking-wider">Media</p>
             <a href="{{ route('admin.gallery.index') }}"      class="sidebar-link {{ request()->routeIs('admin.gallery*') ? 'active' : '' }}">
