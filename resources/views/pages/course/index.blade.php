@@ -25,12 +25,20 @@
         <a href="{{ route('courses.show', $course) }}"
             class="card-hover bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden reveal"
             data-cat="{{ $course->category ? Str::slug($course->category->name) : 'other' }}">
-            <div class="bg-gradient-to-br from-navy-800 to-navy-950 h-40 flex items-center justify-center relative">
-                <i class="fa-solid fa-book-open text-gold-400 text-5xl"></i>
-                @if($course->is_featured)
-                <span class="absolute top-3 right-3 bg-gold-500 text-navy-900 text-xs font-bold px-2.5 py-1 rounded-full">Featured</span>
-                @endif
-            </div>
+          <div class="bg-gradient-to-br from-navy-800 to-navy-950 h-40 flex items-center justify-center relative overflow-hidden">
+    @php $img = $course->thumbnail ?? $course->image ?? null; @endphp
+    @if($img)
+    <img src="{{ asset('storage/' . $img) }}"
+         alt="{{ $course->title }}"
+         class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500"
+         onerror="this.style.display='none'">
+    <div class="absolute inset-0 bg-navy-950/40"></div>
+    @endif
+    <i class="fa-solid fa-book-open text-gold-400 text-5xl relative z-10 {{ $img ? 'opacity-0' : '' }}"></i>
+    @if($course->is_featured)
+    <span class="absolute top-3 right-3 bg-gold-500 text-navy-900 text-xs font-bold px-2.5 py-1 rounded-full z-10">Featured</span>
+    @endif
+</div>
             <div class="p-5">
                 @if($course->category)
                 <span class="text-xs text-navy-500 font-semibold uppercase tracking-wide">{{ $course->category->name }}</span>

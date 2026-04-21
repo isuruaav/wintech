@@ -6,7 +6,7 @@
 @section('content')
 <div class="max-w-3xl space-y-5">
 
-    <form action="{{ route('admin.classes.update', $class) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('admin.classes.update', ['class' => $class->id]) }}" method="POST" enctype="multipart/form-data">
         @csrf @method('PUT')
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 space-y-5">
             <h3 class="font-bold text-navy-900 text-sm uppercase tracking-wide">Class Details</h3>
@@ -27,20 +27,20 @@
                         @endforeach
                     </select>
                 </div>
-               <div class="sm:col-span-2">
-    <label class="block text-sm font-semibold text-navy-900 mb-1.5">Teacher *</label>
-    <select name="teacher_id" class="form-input" required>
-        <option value="">Select Teacher</option>
-        @foreach($teachers as $t)
-        <option value="{{ $t->id }}" {{ $class->teacher_id == $t->id ? 'selected' : '' }}>
-            {{ $t->name }} @if($t->subjects) — {{ $t->subjects }} @endif
-        </option>
-        @endforeach
-    </select>
-    <p class="text-xs text-slate-400 mt-1">
-        <a href="{{ route('admin.teachers.create') }}" target="_blank" class="text-navy-600 hover:underline">Add New Teacher →</a>
-    </p>
-</div>
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-semibold text-navy-900 mb-1.5">Teacher</label>
+                    <select name="teacher_id" class="form-input">
+                        <option value="">Select Teacher</option>
+                        @foreach($teachers as $t)
+                        <option value="{{ $t->id }}" {{ $class->teacher_id == $t->id ? 'selected' : '' }}>
+                            {{ $t->name }} @if($t->subjects) — {{ $t->subjects }} @endif
+                        </option>
+                        @endforeach
+                    </select>
+                    <p class="text-xs text-slate-400 mt-1">
+                        <a href="{{ route('admin.teachers.create') }}" target="_blank" class="text-navy-600 hover:underline">Add New Teacher →</a>
+                    </p>
+                </div>
                 <div>
                     <label class="block text-sm font-semibold text-navy-900 mb-1.5">Teaching Medium *</label>
                     <select name="medium" class="form-input" required>
@@ -73,13 +73,14 @@
                     <label class="block text-sm font-semibold text-navy-900 mb-1.5">Thumbnail Image</label>
                     @if($class->thumbnail)
                     <div class="mb-3">
-                        <img src="{{ Storage::url($class->thumbnail) }}" class="w-32 h-20 rounded-xl object-cover border border-slate-200" alt="">
+                        <img src="{{ asset('storage/' . $class->thumbnail) }}" class="w-32 h-20 rounded-xl object-cover border border-slate-200" alt="">
                     </div>
                     @endif
                     <input type="file" name="thumbnail" accept="image/*" class="form-input py-2 text-sm">
                 </div>
                 <div>
                     <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="hidden" name="is_active" value="0">
                         <input type="checkbox" name="is_active" value="1" {{ $class->is_active ? 'checked' : '' }} class="rounded border-slate-300">
                         <span class="text-sm font-medium text-navy-900">Active</span>
                     </label>
@@ -115,9 +116,9 @@
                     <span class="text-slate-400 text-xs"><i class="fa-solid fa-location-dot mr-1"></i>{{ $s->venue }}</span>
                     @endif
                 </div>
-                <form action="{{ route('admin.classes.schedule.remove', [$class, $s]) }}" method="POST">
+                <form action="{{ route('admin.classes.schedule.remove', ['class' => $class->id, 'schedule' => $s->id]) }}" method="POST">
                     @csrf @method('DELETE')
-                    <button data-confirm="Remove this schedule?"
+                    <button type="submit" onclick="return confirm('Remove this schedule?')"
                             class="w-7 h-7 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg flex items-center justify-center">
                         <i class="fa-solid fa-xmark text-xs"></i>
                     </button>
@@ -129,7 +130,7 @@
         <p class="text-sm text-slate-400 mb-4">No schedules yet.</p>
         @endif
 
-        <form action="{{ route('admin.classes.schedule.add', $class) }}" method="POST">
+        <form action="{{ route('admin.classes.schedule.add', ['class' => $class->id]) }}" method="POST">
             @csrf
             <div class="grid sm:grid-cols-4 gap-3 items-end border-t border-slate-100 pt-4">
                 <div>

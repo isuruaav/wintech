@@ -56,7 +56,7 @@
         Through Technology
     </span>
 
-</h1>
+    </h1>
 
 
                 <p class="text-white/60 text-lg leading-relaxed mb-10 max-w-lg">
@@ -163,22 +163,36 @@
             <a href="{{ route('courses.show', $course) }}"
                class="group card-hover bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden reveal flex flex-col">
                 {{-- Card Header --}}
-                <div class="relative bg-gradient-to-br from-navy-800 to-navy-950 h-44 flex items-center justify-center overflow-hidden">
-                    <div class="absolute inset-0 opacity-20"
-                         style="background-image: radial-gradient(circle at 30% 50%, rgba(240,165,0,0.4), transparent 60%);">
-                    </div>
-                    <i class="fa-solid fa-book-open text-gold-400 text-5xl relative z-10 group-hover:scale-110 transition-transform duration-300"></i>
-                    @if($course->is_featured)
-                    <span class="absolute top-3 right-3 bg-gold-500 text-navy-900 text-xs font-bold px-3 py-1 rounded-full">
-                        ⭐ Featured
-                    </span>
-                    @endif
-                    @if($course->level)
-                    <span class="absolute bottom-3 left-3 bg-white/10 backdrop-blur text-white text-xs font-semibold px-3 py-1 rounded-full border border-white/20">
-                        {{ $course->level }}
-                    </span>
-                    @endif
-                </div>
+             {{-- Card Header --}}
+<div class="relative bg-gradient-to-br from-navy-800 to-navy-950 h-44 flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0 opacity-20"
+         style="background-image: radial-gradient(circle at 30% 50%, rgba(240,165,0,0.4), transparent 60%);">
+    </div>
+
+    {{-- Course Image --}}
+    @if(!empty($course->thumbnail) || !empty($course->image))
+    @php $imgPath = $course->thumbnail ?? $course->image; @endphp
+    <img src="{{ asset('storage/' . $imgPath) }}"
+         alt="{{ $course->title }}"
+         class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500"
+         onerror="this.style.display='none'">
+    <div class="absolute inset-0 bg-navy-950/50"></div>
+    @endif
+
+    <i class="fa-solid fa-book-open text-gold-400 text-5xl relative z-10 group-hover:scale-110 transition-transform duration-300
+        {{ (!empty($course->thumbnail) || !empty($course->image)) ? 'opacity-0' : '' }}"></i>
+
+    @if($course->is_featured)
+    <span class="absolute top-3 right-3 bg-gold-500 text-navy-900 text-xs font-bold px-3 py-1 rounded-full z-10">
+        ⭐ Featured
+    </span>
+    @endif
+    @if($course->level)
+    <span class="absolute bottom-3 left-3 bg-white/10 backdrop-blur text-white text-xs font-semibold px-3 py-1 rounded-full border border-white/20 z-10">
+        {{ $course->level }}
+    </span>
+    @endif
+</div>
                 {{-- Card Body --}}
                 <div class="p-5 flex-1 flex flex-col">
                     @if($course->category)

@@ -11,24 +11,25 @@
 
     <div class="grid lg:grid-cols-3 gap-8">
         <div class="lg:col-span-2 space-y-6">
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                <div class="bg-gradient-to-r from-navy-800 to-navy-950 px-6 py-10 text-white">
-                    @if($course->category)
-                    <span class="bg-gold-500/20 text-gold-400 text-xs font-bold px-3 py-1 rounded-full border border-gold-500/30 mb-3 inline-block">{{ $course->category->name }}</span>
-                    @endif
-                    <h1 class="text-2xl font-extrabold mb-2">{{ $course->title }}</h1>
-                    <div class="flex flex-wrap gap-4 text-sm text-white/60">
-                        @if($course->duration)<span><i class="fa-regular fa-clock mr-1"></i>{{ $course->duration }}</span>@endif
-                        @if($course->level)<span><i class="fa-solid fa-signal mr-1"></i>{{ $course->level }}</span>@endif
-                    </div>
-                </div>
-                @if($course->description)
-                <div class="p-6">
-                    <h3 class="font-bold text-navy-900 mb-3">About This Course</h3>
-                    <p class="text-slate-600 text-sm leading-relaxed">{{ $course->description }}</p>
-                </div>
-                @endif
-            </div>
+           <div class="bg-gradient-to-r from-navy-800 to-navy-950 px-6 py-10 text-white relative overflow-hidden">
+    @php $img = $course->thumbnail ?? $course->image ?? null; @endphp
+    @if($img)
+    <img src="{{ asset('storage/' . $img) }}"
+         alt="{{ $course->title }}"
+         class="absolute inset-0 w-full h-full object-cover opacity-20"
+         onerror="this.style.display='none'">
+    @endif
+    <div class="relative z-10">
+        @if($course->category)
+        <span class="bg-gold-500/20 text-gold-400 text-xs font-bold px-3 py-1 rounded-full border border-gold-500/30 mb-3 inline-block">{{ $course->category->name }}</span>
+        @endif
+        <h1 class="text-2xl font-extrabold mb-2">{{ $course->title }}</h1>
+        <div class="flex flex-wrap gap-4 text-sm text-white/60">
+            @if($course->duration)<span><i class="fa-regular fa-clock mr-1"></i>{{ $course->duration }}</span>@endif
+            @if($course->level)<span><i class="fa-solid fa-signal mr-1"></i>{{ $course->level }}</span>@endif
+        </div>
+    </div>
+</div>
 
             @if($course->syllabus)
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">

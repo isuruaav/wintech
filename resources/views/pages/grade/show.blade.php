@@ -11,36 +11,75 @@
 
     <div class="grid lg:grid-cols-3 gap-8">
         <div class="lg:col-span-2">
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-6">
-                <div class="bg-gradient-to-r from-navy-800 to-navy-950 px-6 py-8 text-white">
-                    <span class="bg-gold-500/20 text-gold-400 text-xs font-bold px-3 py-1 rounded-full border border-gold-500/30 mb-3 inline-block">{{ $class->grade }}</span>
-                    <h1 class="text-2xl font-extrabold mb-1">{{ $class->subject }}</h1>
-           @if($class->teacher_name)<p class="text-white/70 text-sm mb-1"><i class="fa-solid fa-chalkboard-user mr-1"></i>{{ $class->teacher_name }}</p>@endif
-                    @if($class->medium)
-                    <span class="inline-block text-xs font-semibold px-2.5 py-1 rounded-full mt-1
-                        {{ $class->medium === 'english' ? 'bg-emerald-500/20 text-emerald-300' : ($class->medium === 'sinhala' ? 'bg-amber-500/20 text-amber-300' : 'bg-sky-500/20 text-sky-300') }}">
-                        <i class="fa-solid fa-language mr-1"></i>
-                        {{ $class->medium === 'english' ? 'English Medium' : ($class->medium === 'sinhala' ? 'Sinhala Medium' : 'English & Sinhala') }}
-                    </span>
-                    @endif
-                </div>
-                <div class="p-6">
-                    @if($class->description)<p class="text-slate-600 text-sm leading-relaxed mb-4">{{ $class->description }}</p>@endif
-                    @if($class->schedules->count())
-                    <h3 class="font-bold text-navy-900 mb-3">Class Schedule</h3>
-                    <div class="space-y-2">
-                        @foreach($class->schedules as $s)
-                        <div class="flex items-center gap-3 bg-navy-50 rounded-xl px-4 py-3">
-                            <i class="fa-regular fa-calendar text-navy-400"></i>
-                            <span class="font-medium text-navy-900 text-sm">{{ $s->day }}</span>
-                            <span class="text-slate-400 text-sm">{{ \Carbon\Carbon::parse($s->start_time)->format('h:i A') }} – {{ \Carbon\Carbon::parse($s->end_time)->format('h:i A') }}</span>
-                            @if($s->venue)<span class="text-slate-400 text-xs ml-auto"><i class="fa-solid fa-location-dot mr-1"></i>{{ $s->venue }}</span>@endif
-                        </div>
-                        @endforeach
-                    </div>
-                    @endif
-                </div>
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-6">
+    {{-- Thumbnail / Header --}}
+    @if($class->thumbnail)
+    <div class="relative h-52 overflow-hidden">
+        <img src="{{ asset('storage/' . $class->thumbnail) }}"
+             alt="{{ $class->subject }}"
+             class="w-full h-full object-cover"
+             onerror="this.parentElement.classList.add('hidden')">
+        <div class="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-navy-900/40 to-transparent"></div>
+        <div class="absolute bottom-0 left-0 px-6 py-5 text-white">
+            <span class="bg-gold-500/20 text-gold-400 text-xs font-bold px-3 py-1 rounded-full border border-gold-500/30 mb-2 inline-block">{{ $class->grade }}</span>
+            <h1 class="text-2xl font-extrabold mb-1">{{ $class->subject }}</h1>
+            @if($class->teacher_name)
+            <p class="text-white/70 text-sm"><i class="fa-solid fa-chalkboard-user mr-1"></i>{{ $class->teacher_name }}</p>
+            @endif
+        </div>
+    </div>
+    @else
+    <div class="bg-gradient-to-r from-navy-800 to-navy-950 px-6 py-8 text-white">
+        <span class="bg-gold-500/20 text-gold-400 text-xs font-bold px-3 py-1 rounded-full border border-gold-500/30 mb-3 inline-block">{{ $class->grade }}</span>
+        <h1 class="text-2xl font-extrabold mb-1">{{ $class->subject }}</h1>
+        @if($class->teacher_name)
+        <p class="text-white/70 text-sm mb-1"><i class="fa-solid fa-chalkboard-user mr-1"></i>{{ $class->teacher_name }}</p>
+        @endif
+    </div>
+    @endif
+
+    {{-- Medium Badge (shown below image too) --}}
+    @if($class->medium)
+    <div class="px-6 pt-4 {{ $class->thumbnail ? '' : 'hidden' }}">
+        <span class="inline-block text-xs font-semibold px-2.5 py-1 rounded-full
+            {{ $class->medium === 'english' ? 'bg-emerald-100 text-emerald-700' : ($class->medium === 'sinhala' ? 'bg-amber-100 text-amber-700' : 'bg-sky-100 text-sky-700') }}">
+            <i class="fa-solid fa-language mr-1"></i>
+            {{ $class->medium === 'english' ? 'English Medium' : ($class->medium === 'sinhala' ? 'Sinhala Medium' : 'English & Sinhala') }}
+        </span>
+    </div>
+    @endif
+
+    {{-- No thumbnail case - medium badge in header --}}
+    @if(!$class->thumbnail && $class->medium)
+    @php /* already shown in gradient header */ @endphp
+    @endif
+
+    <div class="p-6">
+        @if(!$class->thumbnail && $class->medium)
+        <span class="inline-block text-xs font-semibold px-2.5 py-1 rounded-full mb-4
+            {{ $class->medium === 'english' ? 'bg-emerald-100 text-emerald-700' : ($class->medium === 'sinhala' ? 'bg-amber-100 text-amber-700' : 'bg-sky-100 text-sky-700') }}">
+            <i class="fa-solid fa-language mr-1"></i>
+            {{ $class->medium === 'english' ? 'English Medium' : ($class->medium === 'sinhala' ? 'Sinhala Medium' : 'English & Sinhala') }}
+        </span>
+        @endif
+        @if($class->description)
+        <p class="text-slate-600 text-sm leading-relaxed mb-4">{{ $class->description }}</p>
+        @endif
+        @if($class->schedules->count())
+        <h3 class="font-bold text-navy-900 mb-3">Class Schedule</h3>
+        <div class="space-y-2">
+            @foreach($class->schedules as $s)
+            <div class="flex items-center gap-3 bg-navy-50 rounded-xl px-4 py-3">
+                <i class="fa-regular fa-calendar text-navy-400"></i>
+                <span class="font-medium text-navy-900 text-sm">{{ $s->day }}</span>
+                <span class="text-slate-400 text-sm">{{ \Carbon\Carbon::parse($s->start_time)->format('h:i A') }} – {{ \Carbon\Carbon::parse($s->end_time)->format('h:i A') }}</span>
+                @if($s->venue)<span class="text-slate-400 text-xs ml-auto"><i class="fa-solid fa-location-dot mr-1"></i>{{ $s->venue }}</span>@endif
             </div>
+            @endforeach
+        </div>
+        @endif
+    </div>
+</div>
 
             @if($upcoming->count())
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">

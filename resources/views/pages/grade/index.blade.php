@@ -28,37 +28,60 @@
         <div data-tab-panel="{{ $subject }}" class="{{ !$loop->first ? 'hidden' : '' }}">
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                 @foreach($classes as $class)
-                <a href="{{ route('grade.show', $class->slug) }}"
-                   class="card-hover bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="bg-navy-100 text-navy-700 text-xs font-bold px-2.5 py-1 rounded-full">{{ $class->grade }}</span>
-                        @if($class->medium === 'english')
-                            <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">English</span>
-                        @elseif($class->medium === 'sinhala')
-                            <span class="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">Sinhala</span>
-                        @else
-                            <span class="text-xs font-medium text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full">Eng / Sin</span>
-                        @endif
-                    </div>
-                    <h3 class="font-bold text-navy-900 text-base mb-1">{{ $class->subject }}</h3>
-          @if($class->teacher_name)
-<p class="text-slate-500 text-xs mb-1"><i class="fa-solid fa-chalkboard-user text-navy-300 mr-1"></i>{{ $class->teacher_name }}</p>
-@endif
-                    <p class="text-slate-400 text-sm mb-3">{{ $class->grade }}</p>
-                    @if($class->monthly_fee)
-                    <p class="text-navy-700 font-semibold text-sm">Rs. {{ number_format($class->monthly_fee) }}<span class="text-slate-400 font-normal">/month</span></p>
-                    @endif
-                    @if($class->schedules->count())
-                    <div class="mt-3 pt-3 border-t border-slate-100 space-y-1">
-                        @foreach($class->schedules->take(2) as $s)
-                        <p class="text-xs text-slate-500">
-                            <i class="fa-regular fa-calendar text-navy-300 mr-1"></i>
-                            {{ $s->day }} {{ \Carbon\Carbon::parse($s->start_time)->format('h:i A') }}
-                        </p>
-                        @endforeach
-                    </div>
-                    @endif
-                </a>
+      <a href="{{ route('grade.show', $class->slug) }}"
+   class="card-hover bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+
+    {{-- Thumbnail --}}
+    @if($class->thumbnail)
+    <div class="h-36 overflow-hidden">
+        <img src="{{ asset('storage/' . $class->thumbnail) }}"
+             alt="{{ $class->subject }}"
+             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+             onerror="this.parentElement.style.display='none'">
+    </div>
+    @else
+    <div class="h-36 bg-gradient-to-br from-navy-800 to-navy-950 flex items-center justify-center">
+        @php
+        $icons = ['ICT'=>'fa-computer','English'=>'fa-language','Mathematics'=>'fa-calculator','Science'=>'fa-flask'];
+        @endphp
+        <i class="fa-solid {{ $icons[$class->subject] ?? 'fa-book' }} text-gold-400 text-4xl"></i>
+    </div>
+    @endif
+
+    <div class="p-5">
+        <div class="flex items-center justify-between mb-3">
+            <span class="bg-navy-100 text-navy-700 text-xs font-bold px-2.5 py-1 rounded-full">{{ $class->grade }}</span>
+            @if($class->medium === 'english')
+                <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">English</span>
+            @elseif($class->medium === 'sinhala')
+                <span class="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">Sinhala</span>
+            @else
+                <span class="text-xs font-medium text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full">Eng / Sin</span>
+            @endif
+        </div>
+        <h3 class="font-bold text-navy-900 text-base mb-1">{{ $class->subject }}</h3>
+        @if($class->teacher_name)
+        <p class="text-slate-500 text-xs mb-1">
+            <i class="fa-solid fa-chalkboard-user text-navy-300 mr-1"></i>{{ $class->teacher_name }}
+        </p>
+        @endif
+        @if($class->monthly_fee)
+        <p class="text-navy-700 font-semibold text-sm mt-1">
+            Rs. {{ number_format($class->monthly_fee) }}<span class="text-slate-400 font-normal">/month</span>
+        </p>
+        @endif
+        @if($class->schedules->count())
+        <div class="mt-3 pt-3 border-t border-slate-100 space-y-1">
+            @foreach($class->schedules->take(2) as $s)
+            <p class="text-xs text-slate-500">
+                <i class="fa-regular fa-calendar text-navy-300 mr-1"></i>
+                {{ $s->day }} {{ \Carbon\Carbon::parse($s->start_time)->format('h:i A') }}
+            </p>
+            @endforeach
+        </div>
+        @endif
+    </div>
+</a>
                 @endforeach
             </div>
         </div>

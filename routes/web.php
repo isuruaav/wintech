@@ -90,16 +90,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::patch('teachers/{teacher}/toggle', [TeacherAdminController::class, 'toggleStatus'])->name('teachers.toggle');
     Route::delete('teachers/{teacher}',       [TeacherAdminController::class, 'destroy'])->name('teachers.destroy');
 
-    // Grade Classes
-    Route::get('classes',                        [GradeClassAdminController::class, 'index'])->name('classes.index');
-    Route::get('classes/create',                 [GradeClassAdminController::class, 'create'])->name('classes.create');
-    Route::post('classes',                       [GradeClassAdminController::class, 'store'])->name('classes.store');
-    Route::get('classes/{class}/edit',           [GradeClassAdminController::class, 'edit'])->name('classes.edit');
-    Route::put('classes/{class}',                [GradeClassAdminController::class, 'update'])->name('classes.update');
-    Route::patch('classes/{class}/toggle',       [GradeClassAdminController::class, 'toggleStatus'])->name('classes.toggle');
-    Route::delete('classes/{class}',             [GradeClassAdminController::class, 'destroy'])->name('classes.destroy');
-    Route::post('classes/{class}/schedule',      [GradeClassAdminController::class, 'addSchedule'])->name('classes.schedule.add');
-    Route::delete('classes/{class}/schedule/{schedule}', [GradeClassAdminController::class, 'removeSchedule'])->name('classes.schedule.remove');
+ // Grade Classes
+Route::get('classes',                        [GradeClassAdminController::class, 'index'])->name('classes.index');
+Route::get('classes/create',                 [GradeClassAdminController::class, 'create'])->name('classes.create');
+Route::post('classes',                       [GradeClassAdminController::class, 'store'])->name('classes.store');
+Route::get('classes/{class}/edit',           [GradeClassAdminController::class, 'edit'])->name('classes.edit')->whereNumber('class');
+Route::put('classes/{class}',                [GradeClassAdminController::class, 'update'])->name('classes.update')->whereNumber('class');
+Route::patch('classes/{class}/toggle',       [GradeClassAdminController::class, 'toggleStatus'])->name('classes.toggle')->whereNumber('class');
+Route::delete('classes/{class}',             [GradeClassAdminController::class, 'destroy'])->name('classes.destroy')->whereNumber('class');
+Route::post('classes/{class}/schedule',      [GradeClassAdminController::class, 'addSchedule'])->name('classes.schedule.add')->whereNumber('class');
+Route::delete('classes/{class}/schedule/{schedule}', [GradeClassAdminController::class, 'removeSchedule'])->name('classes.schedule.remove')->whereNumber('class');
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     // Exams Admin

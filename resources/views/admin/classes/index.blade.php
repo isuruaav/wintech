@@ -89,19 +89,19 @@
                     </td>
                     <td class="text-center">
                         <div class="flex items-center justify-center gap-2">
-                            <a href="{{ route('admin.classes.edit', $class) }}"
+                            <a href="{{ route('admin.classes.edit', $class->id) }}"
                                class="w-8 h-8 bg-navy-50 hover:bg-navy-100 text-navy-600 rounded-lg flex items-center justify-center transition-colors"
                                data-tooltip="Edit">
                                 <i class="fa-solid fa-pen text-xs"></i>
                             </a>
-                            <form action="{{ route('admin.classes.toggle', $class) }}" method="POST" class="inline">
+                            <form action="{{ route('admin.classes.toggle', $class->id) }}" method="POST" class="inline">
                                 @csrf @method('PATCH')
                                 <button type="submit"
                                         class="w-8 h-8 {{ $class->is_active ? 'bg-amber-50 hover:bg-amber-100 text-amber-600' : 'bg-green-50 hover:bg-green-100 text-green-600' }} rounded-lg flex items-center justify-center transition-colors">
                                     <i class="fa-solid {{ $class->is_active ? 'fa-eye-slash' : 'fa-eye' }} text-xs"></i>
                                 </button>
                             </form>
-                            <form action="{{ route('admin.classes.destroy', $class) }}" method="POST" class="inline">
+                            <form action="{{ route('admin.classes.destroy', $class->id) }}" method="POST" class="inline">
                                 @csrf @method('DELETE')
                                 <button data-confirm="Delete '{{ $class->grade }} — {{ $class->subject }}'?"
                                         class="w-8 h-8 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg flex items-center justify-center transition-colors">

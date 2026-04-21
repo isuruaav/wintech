@@ -29,13 +29,15 @@ class GradeClassAdminController extends Controller
         return view('admin.classes.index', compact('classes', 'subjects', 'grades'));
     }
 
-    public function create()
-    {
-        $teachers = Teacher::where('is_active', true)->orderBy('name')->get();
-        $grades   = ['6','7','8','9','10','11','O/L','A/L'];
-        return view('admin.classes.create', compact('teachers', 'grades'));
-    }
+public function create()
+{
+    $teachers = Teacher::where('is_active', true)->orderBy('name')->get();
+    $grades   = ['6','7','8','9','10','11','O/L','A/L'];
+    $subjects = ['ICT','English','Mathematics','Science'];
+    $days     = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 
+    return view('admin.classes.create', compact('teachers', 'grades', 'subjects', 'days'));
+}
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -51,16 +53,19 @@ class GradeClassAdminController extends Controller
             'sort_order'   => 'nullable|integer',
         ]);
 
-        $data['is_active']  = $request->boolean('is_active', true);
-        $data['slug']       = Str::slug($data['subject'] . '-grade-' . $data['grade'] . '-' . uniqid());
+        $data['is_active'] = $request->boolean('is_active', true);
+        $data['slug']      = Str::slug($data['subject'] . '-grade-' . $data['grade'] . '-' . uniqid());
 
-        $class = GradeClass::create($data);
+        if ($request->hasFile('thumbnail')) {
+            $data['thumbnail'] = $request->file('thumbnail')->store('classes', 'public');
+        }
 
-        // Save schedules
+        $gradeClass = GradeClass::create($data);
+
         if ($request->filled('schedules')) {
             foreach ($request->schedules as $schedule) {
                 if (!empty($schedule['day'])) {
-                    $class->schedules()->create([
+                    $gradeClass->schedules()->create([
                         'day'        => $schedule['day'],
                         'start_time' => $schedule['start_time'] ?? null,
                         'end_time'   => $schedule['end_time'] ?? null,
@@ -74,15 +79,30 @@ class GradeClassAdminController extends Controller
             ->with('success', 'Grade class created successfully!');
     }
 
-    public function edit(GradeClass $gradeClass)
+    public function edit($class)
     {
-        $teachers = Teacher::where('is_active', true)->orderBy('name')->get();
-        $grades   = ['6','7','8','9','10','11','O/L','A/L'];
-        return view('admin.classes.edit', compact('gradeClass', 'teachers', 'grades'));
+        $gradeClass = GradeClass::findOrFail($class);
+        $teachers   = Teacher::where('is_active', true)->orderBy('name')->get();
+        $grades     = ['6','7','8','9','10','11','O/L','A/L'];
+        $subjects   = ['ICT','English','Mathematics','Science'];
+        $days       = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+        $schedules  = $gradeClass->schedules()->orderBy('day')->get();
+
+        return view('admin.classes.edit', [
+            'class'      => $gradeClass,
+            'gradeClass' => $gradeClass,
+            'teachers'   => $teachers,
+            'grades'     => $grades,
+            'subjects'   => $subjects,
+            'days'       => $days,
+            'schedules'  => $schedules,
+        ]);
     }
 
-    public function update(Request $request, GradeClass $gradeClass)
+    public function update(Request $request, $class)
     {
+        $gradeClass = GradeClass::findOrFail($class);
+
         $data = $request->validate([
             'subject'      => 'required|string|max:100',
             'grade'        => 'required|string|max:20',
@@ -98,27 +118,35 @@ class GradeClassAdminController extends Controller
 
         $data['is_active'] = $request->boolean('is_active', true);
 
+        if ($request->hasFile('thumbnail')) {
+            $data['thumbnail'] = $request->file('thumbnail')->store('classes', 'public');
+        }
+
         $gradeClass->update($data);
 
         return redirect()->route('admin.classes.index')
-            ->with('success', 'Grade class updated successfully!');
+            ->with('success', 'Grade class updated!');
     }
 
-    public function toggleStatus(GradeClass $gradeClass)
+    public function toggleStatus($class)
     {
+        $gradeClass = GradeClass::findOrFail($class);
         $gradeClass->update(['is_active' => !$gradeClass->is_active]);
         return back()->with('success', 'Status updated.');
     }
 
-    public function destroy(GradeClass $gradeClass)
+    public function destroy($class)
     {
+        $gradeClass = GradeClass::findOrFail($class);
         $gradeClass->schedules()->delete();
         $gradeClass->delete();
         return back()->with('success', 'Grade class deleted.');
     }
 
-    public function addSchedule(Request $request, GradeClass $gradeClass)
+    public function addSchedule(Request $request, $class)
     {
+        $gradeClass = GradeClass::findOrFail($class);
+
         $request->validate([
             'day'        => 'required|string',
             'start_time' => 'required|string',
@@ -129,15 +157,20 @@ class GradeClassAdminController extends Controller
             'day'        => $request->day,
             'start_time' => $request->start_time,
             'end_time'   => $request->end_time,
+            'venue'      => $request->venue,
             'is_active'  => true,
         ]);
 
         return back()->with('success', 'Schedule added.');
     }
 
-    public function removeSchedule(GradeClass $gradeClass, ClassSchedule $schedule)
+    public function removeSchedule($class, $schedule)
     {
-        $schedule->delete();
+        $gradeClass      = GradeClass::findOrFail($class);
+        $scheduleRecord  = ClassSchedule::where('id', $schedule)
+                            ->where('grade_class_id', $gradeClass->id)
+                            ->firstOrFail();
+        $scheduleRecord->delete();
         return back()->with('success', 'Schedule removed.');
     }
 }
