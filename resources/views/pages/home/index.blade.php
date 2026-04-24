@@ -418,39 +418,84 @@
                     </div>
                 </div>
 
-                {{-- Owner Card --}}
-                <div class="bg-white/5 backdrop-blur rounded-2xl border border-white/10 p-6">
-                    <div class="flex items-center gap-4 mb-5">
-                        <div class="w-16 h-16 bg-gold-500 rounded-2xl flex items-center justify-center shrink-0">
-                            <i class="fa-solid fa-user-tie text-navy-900 text-2xl"></i>
-                        </div>
-                        <div>
-                            <p class="text-white font-extrabold text-lg leading-tight">Chathuranga Dissanayaka</p>
-                            <p class="text-gold-400 text-sm">Founder & Director</p>
-                            <p class="text-white/40 text-xs">WinTech Institute</p>
-                        </div>
-                    </div>
-                    <div class="space-y-3">
-                        <a href="tel:+94784161920" class="flex items-center gap-3 text-white/70 hover:text-white transition-colors text-sm">
-                            <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-phone text-gold-400 text-xs"></i>
-                            </div>
-                            +94 78 416 1920
-                        </a>
-                        <a href="https://wa.me/94784161920" target="_blank" class="flex items-center gap-3 text-white/70 hover:text-white transition-colors text-sm">
-                            <div class="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center shrink-0">
-                                <i class="fa-brands fa-whatsapp text-green-400 text-xs"></i>
-                            </div>
-                            Chat on WhatsApp
-                        </a>
-                        <div class="flex items-center gap-3 text-white/50 text-sm">
-                            <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-location-dot text-gold-400 text-xs"></i>
-                            </div>
-                            Kiralabokkagama, Moragollagama
-                        </div>
-                    </div>
-                </div>
+          {{--
+    Owner Card — uses SiteSetting model for dynamic data.
+    Place this in your contact/about section blade.
+    Make sure to import: use App\Models\SiteSetting;
+    Or use the helper: \App\Models\SiteSetting::get('key')
+--}}
+
+@php
+    $ownerPhoto         = \App\Models\SiteSetting::get('owner_photo');
+    $ownerName          = \App\Models\SiteSetting::get('owner_name',          'Chathuranga Dissanayaka');
+    $ownerTitle         = \App\Models\SiteSetting::get('owner_title',         'Founder & Director');
+    $ownerQualification = \App\Models\SiteSetting::get('owner_qualification', '');
+    $ownerPhone         = \App\Models\SiteSetting::get('owner_phone',         '+94 78 416 1920');
+    $ownerWhatsapp      = \App\Models\SiteSetting::get('owner_whatsapp',      '94784161920');
+    $ownerAddress       = \App\Models\SiteSetting::get('owner_address',       'Kiralabokkagama, Moragollagama');
+@endphp
+
+{{-- Owner Card --}}
+<div class="bg-white/5 backdrop-blur rounded-2xl border border-white/10 p-6">
+    <div class="flex items-center gap-4 mb-5">
+
+        {{-- Photo or Icon --}}
+        <div class="w-16 h-16 rounded-2xl shrink-0 overflow-hidden
+                    {{ $ownerPhoto ? '' : 'bg-gold-500 flex items-center justify-center' }}">
+            @if($ownerPhoto)
+                <img src="{{ Storage::url($ownerPhoto) }}"
+                     alt="{{ $ownerName }}"
+                     class="w-full h-full object-cover">
+            @else
+                <i class="fa-solid fa-user-tie text-navy-900 text-2xl"></i>
+            @endif
+        </div>
+
+        {{-- Name, Title, Qualification --}}
+        <div>
+            <p class="text-white font-extrabold text-lg leading-tight">{{ $ownerName }}</p>
+            <p class="text-gold-400 text-sm">{{ $ownerTitle }}</p>
+            @if($ownerQualification)
+                <p class="text-white/50 text-xs mt-0.5">
+                    <i class="fa-solid fa-graduation-cap mr-1"></i>{{ $ownerQualification }}
+                </p>
+            @endif
+            <p class="text-white/40 text-xs mt-0.5">WinTech Institute</p>
+        </div>
+    </div>
+
+    {{-- Contact Links --}}
+    <div class="space-y-3">
+        @if($ownerPhone)
+        <a href="tel:{{ preg_replace('/\s+/', '', $ownerPhone) }}"
+           class="flex items-center gap-3 text-white/70 hover:text-white transition-colors text-sm">
+            <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-phone text-gold-400 text-xs"></i>
+            </div>
+            {{ $ownerPhone }}
+        </a>
+        @endif
+
+        @if($ownerWhatsapp)
+        <a href="https://wa.me/{{ $ownerWhatsapp }}" target="_blank"
+           class="flex items-center gap-3 text-white/70 hover:text-white transition-colors text-sm">
+            <div class="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center shrink-0">
+                <i class="fa-brands fa-whatsapp text-green-400 text-xs"></i>
+            </div>
+            Chat on WhatsApp
+        </a>
+        @endif
+
+        @if($ownerAddress)
+        <div class="flex items-center gap-3 text-white/50 text-sm">
+            <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-location-dot text-gold-400 text-xs"></i>
+            </div>
+            {{ $ownerAddress }}
+        </div>
+        @endif
+    </div>
+</div>
             </div>
         </div>
     </div>

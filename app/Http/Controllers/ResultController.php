@@ -9,11 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class ResultController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -31,22 +26,21 @@ class ResultController extends Controller
 
         $results = $query->latest()->get();
 
-        // Stats
-        $totalExams  = $results->count();
-        $passCount   = $results->where('status', 'pass')->count();
-        $avgMarks    = $totalExams ? round($results->avg('marks'), 1) : 0;
-        $bestGrade   = $results->sortByDesc('marks')->first()?->grade_letter ?? '—';
+        $totalExams = $results->count();
+        $passCount  = $results->where('status', 'pass')->count();
+        $avgMarks   = $totalExams ? round($results->avg('marks'), 1) : 0;
+        $bestGrade  = $results->sortByDesc('marks')->first()?->grade_letter ?? '—';
 
-        // Subjects for filter
-        $subjects = Result::where('user_id', $user->id)
-            ->whereHas('exam', fn($q) => $q->where('is_published', true))
-            ->with('exam:id,subject')
-            ->get()
-            ->pluck('exam.subject')
-            ->unique()
-            ->filter()
-            ->sort()
-            ->values();
+        try {
+            $subjects = Result::where('user_id', $user->id)
+                ->whereHas('exam', fn($q) => $q->where('is_published', true))
+                ->with('exam:id,subject')
+                ->get()
+                ->pluck('exam.subject')
+                ->unique()->filter()->sort()->values();
+        } catch (\Throwable $e) {
+            $subjects = collect();
+        }
 
         $grades = ['6','7','8','9','10','11','O/L','A/L'];
 

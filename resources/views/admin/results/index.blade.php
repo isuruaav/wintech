@@ -33,7 +33,7 @@
             <h2 class="font-bold text-navy-900 mb-4 flex items-center gap-2">
                 <i class="fa-solid fa-user-plus text-navy-400"></i> Add / Update Result
             </h2>
-            <form method="POST" action="{{ route('admin.results.store', $exam) }}" class="space-y-4">
+            <form method="POST" action="{{ route('admin.exams.results.store', $exam) }}" class="space-y-4">
                 @csrf
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Student</label>
@@ -114,7 +114,7 @@
                             </span>
                         </td>
                         <td class="px-4 py-3 text-right">
-                            <form method="POST" action="{{ route('admin.results.destroy', [$exam, $result]) }}"
+                            <form method="POST" action="{{ route('admin.exams.results.destroy', [$exam, $result]) }}"
                                   onsubmit="return confirm('Delete this result?')">
                                 @csrf @method('DELETE')
                                 <button class="text-xs px-2 py-1 bg-red-50 text-red-600 rounded-lg hover:bg-red-100">

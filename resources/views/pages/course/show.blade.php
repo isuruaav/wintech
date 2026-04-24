@@ -11,12 +11,12 @@
 
     <div class="grid lg:grid-cols-3 gap-8">
         <div class="lg:col-span-2 space-y-6">
-           <div class="bg-gradient-to-r from-navy-800 to-navy-950 px-6 py-10 text-white relative overflow-hidden">
+       <div class="bg-gradient-to-r from-navy-800 to-navy-950 px-6 py-10 text-white relative overflow-hidden">
     @php $img = $course->thumbnail ?? $course->image ?? null; @endphp
     @if($img)
     <img src="{{ asset('storage/' . $img) }}"
          alt="{{ $course->title }}"
-         class="absolute inset-0 w-full h-full object-cover opacity-20"
+         class="absolute inset-0 w-full h-full object-cover opacity-20 lightbox-trigger"
          onerror="this.style.display='none'">
     @endif
     <div class="relative z-10">
@@ -30,7 +30,6 @@
         </div>
     </div>
 </div>
-
             @if($course->syllabus)
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
                 <h3 class="font-bold text-navy-900 mb-4"><i class="fa-solid fa-list-check text-gold-500 mr-2"></i>Course Syllabus</h3>

@@ -25,6 +25,7 @@ use App\Http\Controllers\Admin\DownloadController;
 use App\Http\Controllers\Admin\EnquiryController;
 use App\Http\Controllers\Admin\GradeClassAdminController;
 use App\Http\Controllers\Admin\TeacherAdminController;
+use App\Http\Controllers\Admin\SiteSettingController;
 
 // =====================
 // PUBLIC ROUTES
@@ -80,71 +81,59 @@ Route::post('/admin/logout', [AdminLoginController::class, 'logout'])->name('adm
 // =====================
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
-
-    // Teachers
-    Route::get('teachers',                    [TeacherAdminController::class, 'index'])->name('teachers.index');
-    Route::get('teachers/create',             [TeacherAdminController::class, 'create'])->name('teachers.create');
-    Route::post('teachers',                   [TeacherAdminController::class, 'store'])->name('teachers.store');
-    Route::get('teachers/{teacher}/edit',     [TeacherAdminController::class, 'edit'])->name('teachers.edit');
-    Route::put('teachers/{teacher}',          [TeacherAdminController::class, 'update'])->name('teachers.update');
-    Route::patch('teachers/{teacher}/toggle', [TeacherAdminController::class, 'toggleStatus'])->name('teachers.toggle');
-    Route::delete('teachers/{teacher}',       [TeacherAdminController::class, 'destroy'])->name('teachers.destroy');
-
- // Grade Classes
-Route::get('classes',                        [GradeClassAdminController::class, 'index'])->name('classes.index');
-Route::get('classes/create',                 [GradeClassAdminController::class, 'create'])->name('classes.create');
-Route::post('classes',                       [GradeClassAdminController::class, 'store'])->name('classes.store');
-Route::get('classes/{class}/edit',           [GradeClassAdminController::class, 'edit'])->name('classes.edit')->whereNumber('class');
-Route::put('classes/{class}',                [GradeClassAdminController::class, 'update'])->name('classes.update')->whereNumber('class');
-Route::patch('classes/{class}/toggle',       [GradeClassAdminController::class, 'toggleStatus'])->name('classes.toggle')->whereNumber('class');
-Route::delete('classes/{class}',             [GradeClassAdminController::class, 'destroy'])->name('classes.destroy')->whereNumber('class');
-Route::post('classes/{class}/schedule',      [GradeClassAdminController::class, 'addSchedule'])->name('classes.schedule.add')->whereNumber('class');
-Route::delete('classes/{class}/schedule/{schedule}', [GradeClassAdminController::class, 'removeSchedule'])->name('classes.schedule.remove')->whereNumber('class');
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    // Exams Admin
-    Route::prefix('admin/exams')->name('admin.exams.')->middleware(['auth', 'role:admin'])->group(function () {
-        Route::get('/',                    [App\Http\Controllers\Admin\ExamAdminController::class, 'index'])->name('index');
-        Route::get('/create',              [App\Http\Controllers\Admin\ExamAdminController::class, 'create'])->name('create');
-        Route::post('/',                   [App\Http\Controllers\Admin\ExamAdminController::class, 'store'])->name('store');
-        Route::get('/{exam}/edit',         [App\Http\Controllers\Admin\ExamAdminController::class, 'edit'])->name('edit');
-        Route::put('/{exam}',              [App\Http\Controllers\Admin\ExamAdminController::class, 'update'])->name('update');
-        Route::delete('/{exam}',           [App\Http\Controllers\Admin\ExamAdminController::class, 'destroy'])->name('destroy');
-        Route::patch('/{exam}/publish',    [App\Http\Controllers\Admin\ExamAdminController::class, 'togglePublish'])->name('toggle-publish');
-        Route::get('/{exam}/results',      [App\Http\Controllers\Admin\ResultAdminController::class, 'index'])->name('results');
-        Route::post('/{exam}/results',     [App\Http\Controllers\Admin\ResultAdminController::class, 'store'])->name('results.store');  // alias
-        Route::delete('/{exam}/results/{result}', [App\Http\Controllers\Admin\ResultAdminController::class, 'destroy'])->name('results.destroy');
-    });
 
-    // Results store shortcut
-    Route::post('admin/results/{exam}',   [App\Http\Controllers\Admin\ResultAdminController::class, 'store'])->name('admin.results.store')->middleware(['auth', 'role:admin']);
-    Route::delete('admin/results/{exam}/{result}', [App\Http\Controllers\Admin\ResultAdminController::class, 'destroy'])->name('admin.results.destroy')->middleware(['auth', 'role:admin']);
+    // Teachers
+    Route::get('teachers',                       [TeacherAdminController::class, 'index'])->name('teachers.index');
+    Route::get('teachers/create',                [TeacherAdminController::class, 'create'])->name('teachers.create');
+    Route::post('teachers',                      [TeacherAdminController::class, 'store'])->name('teachers.store');
+    Route::get('teachers/{teacher}/edit',        [TeacherAdminController::class, 'edit'])->name('teachers.edit');
+    Route::put('teachers/{teacher}',             [TeacherAdminController::class, 'update'])->name('teachers.update');
+    Route::patch('teachers/{teacher}/toggle',    [TeacherAdminController::class, 'toggleStatus'])->name('teachers.toggle');
+    Route::delete('teachers/{teacher}',          [TeacherAdminController::class, 'destroy'])->name('teachers.destroy');
+
+    // Grade Classes
+    Route::get('classes',                        [GradeClassAdminController::class, 'index'])->name('classes.index');
+    Route::get('classes/create',                 [GradeClassAdminController::class, 'create'])->name('classes.create');
+    Route::post('classes',                       [GradeClassAdminController::class, 'store'])->name('classes.store');
+    Route::get('classes/{class}/edit',           [GradeClassAdminController::class, 'edit'])->name('classes.edit')->whereNumber('class');
+    Route::put('classes/{class}',                [GradeClassAdminController::class, 'update'])->name('classes.update')->whereNumber('class');
+    Route::patch('classes/{class}/toggle',       [GradeClassAdminController::class, 'toggleStatus'])->name('classes.toggle')->whereNumber('class');
+    Route::delete('classes/{class}',             [GradeClassAdminController::class, 'destroy'])->name('classes.destroy')->whereNumber('class');
+    Route::post('classes/{class}/schedule',      [GradeClassAdminController::class, 'addSchedule'])->name('classes.schedule.add')->whereNumber('class');
+    Route::delete('classes/{class}/schedule/{schedule}', [GradeClassAdminController::class, 'removeSchedule'])->name('classes.schedule.remove')->whereNumber('class');
+
     // Courses
     Route::resource('courses', AdminCourseController::class)->except(['show']);
 
     // Students
     Route::resource('students', StudentController::class)->except(['show']);
-    Route::post('/students/{student}/toggle-active', [StudentController::class, 'toggleActive'])->name('students.toggle-active');
-    Route::post('/students/{student}/approve', [StudentController::class, 'approve'])->name('students.approve');
-    Route::post('/students/{student}/reject',  [StudentController::class, 'reject'])->name('students.reject');
+    Route::post('students/{student}/toggle-active', [StudentController::class, 'toggleActive'])->name('students.toggle-active');
+    Route::post('students/{student}/approve',       [StudentController::class, 'approve'])->name('students.approve');
+    Route::post('students/{student}/reject',        [StudentController::class, 'reject'])->name('students.reject');
 
     // Exams & Results
-    Route::resource('exams', ExamController::class)->except(['show', 'edit', 'update']);
-    Route::get('/exams/{exam}/manage',       [ExamController::class, 'manage'])->name('exams.manage');
-    Route::post('/exams/{exam}/save-results', [ExamController::class, 'saveResults'])->name('exams.save-results');
-    Route::post('/exams/{exam}/toggle-publish', [ExamController::class, 'togglePublish'])->name('exams.toggle-publish');
+    Route::resource('exams', ExamController::class)->except(['show']);
+    Route::get('exams/{exam}/manage',              [ExamController::class, 'manage'])->name('exams.manage');
+    Route::post('exams/{exam}/save-results',       [ExamController::class, 'saveResults'])->name('exams.save-results');
+    Route::patch('exams/{exam}/toggle-publish',    [ExamController::class, 'togglePublish'])->name('exams.toggle-publish');
+    Route::get('exams/{exam}/results',             [App\Http\Controllers\Admin\ResultAdminController::class, 'index'])->name('exams.results');
+    Route::post('exams/{exam}/results',            [App\Http\Controllers\Admin\ResultAdminController::class, 'store'])->name('exams.results.store');
+    Route::delete('exams/{exam}/results/{result}', [App\Http\Controllers\Admin\ResultAdminController::class, 'destroy'])->name('exams.results.destroy');
 
     // Online Classes
     Route::resource('online-classes', AdminOnlineClassController::class)->except(['show']);
-    // Online Classes Admin
-    Route::prefix('admin/online-classes')->name('admin.online-classes.')->middleware(['auth', 'role:admin'])->group(function () {
-        Route::get('/',           [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'index'])->name('index');
-        Route::get('/create',     [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'create'])->name('create');
-        Route::post('/',          [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'store'])->name('store');
-        Route::get('/{onlineClass}/edit',    [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'edit'])->name('edit');
-        Route::put('/{onlineClass}',         [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'update'])->name('update');
-        Route::delete('/{onlineClass}',      [App\Http\Controllers\Admin\OnlineClassAdminController::class, 'destroy'])->name('destroy');
-    });
+
+    // Announcements
+    Route::get('announcements',                         [App\Http\Controllers\Admin\AnnouncementController::class, 'index'])->name('announcements.index');
+    Route::get('announcements/create',                  [App\Http\Controllers\Admin\AnnouncementController::class, 'create'])->name('announcements.create');
+    Route::post('announcements',                        [App\Http\Controllers\Admin\AnnouncementController::class, 'store'])->name('announcements.store');
+    Route::get('announcements/{announcement}/edit',     [App\Http\Controllers\Admin\AnnouncementController::class, 'edit'])->name('announcements.edit');
+    Route::put('announcements/{announcement}',          [App\Http\Controllers\Admin\AnnouncementController::class, 'update'])->name('announcements.update');
+    Route::delete('announcements/{announcement}',       [App\Http\Controllers\Admin\AnnouncementController::class, 'destroy'])->name('announcements.destroy');
+    Route::patch('announcements/{announcement}/toggle', [App\Http\Controllers\Admin\AnnouncementController::class, 'toggle'])->name('announcements.toggle');
+
     // Gallery
     Route::resource('gallery', AdminGalleryController::class)->except(['show']);
 
@@ -159,4 +148,7 @@ Route::delete('classes/{class}/schedule/{schedule}', [GradeClassAdminController:
 
     // Enquiries
     Route::resource('enquiries', EnquiryController::class)->only(['index', 'show', 'destroy']);
+
+    Route::get('settings', [SiteSettingController::class, 'index'])->name('settings.index');
+    Route::put('settings', [SiteSettingController::class, 'update'])->name('settings.update');
 });

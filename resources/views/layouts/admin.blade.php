@@ -20,10 +20,9 @@
         {{-- Logo --}}
         <div class="flex items-center gap-3 px-5 py-5 border-b border-white/10">
             <div class="w-9 h-9 flex items-center justify-center shrink-0">
-          <!-- Logo Image -->
-    <img src="{{ asset('images/logo.png') }}" 
-         alt="WinTech Logo" 
-         class="w-10 h-10 object-contain">
+                <img src="{{ asset('images/logo.png') }}"
+                     alt="WinTech Logo"
+                     class="w-10 h-10 object-contain">
             </div>
             <div>
                 <p class="text-white font-extrabold leading-none">WinTech</p>
@@ -33,57 +32,62 @@
 
         {{-- Nav --}}
         <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-            <a href="{{ route('admin.dashboard') }}"          class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+            <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <i class="fa-solid fa-gauge-high w-5 text-center"></i> Dashboard
             </a>
 
             <p class="text-white/30 text-xs font-semibold uppercase px-3 pt-4 pb-1 tracking-wider">Academic</p>
-            <a href="{{ route('admin.courses.index') }}"      class="sidebar-link {{ request()->routeIs('admin.courses*') ? 'active' : '' }}">
+            <a href="{{ route('admin.courses.index') }}" class="sidebar-link {{ request()->routeIs('admin.courses*') ? 'active' : '' }}">
                 <i class="fa-solid fa-book w-5 text-center"></i> Courses
             </a>
             <a href="{{ route('admin.classes.index') }}" class="sidebar-link {{ request()->routeIs('admin.classes*') ? 'active' : '' }}">
-    <i class="fa-solid fa-chalkboard"></i> Grade Classes
-</a>
-<a href="{{ route('admin.teachers.index') }}" class="sidebar-link {{ request()->routeIs('admin.teachers*') ? 'active' : '' }}">
-    <i class="fa-solid fa-chalkboard-user"></i> Teachers
-</a>
-            <a href="{{ route('admin.students.index') }}"     class="sidebar-link {{ request()->routeIs('admin.students*') ? 'active' : '' }}">
+                <i class="fa-solid fa-chalkboard w-5 text-center"></i> Grade Classes
+            </a>
+            <a href="{{ route('admin.teachers.index') }}" class="sidebar-link {{ request()->routeIs('admin.teachers*') ? 'active' : '' }}">
+                <i class="fa-solid fa-chalkboard-user w-5 text-center"></i> Teachers
+            </a>
+            <a href="{{ route('admin.students.index') }}" class="sidebar-link {{ request()->routeIs('admin.students*') ? 'active' : '' }}">
                 <i class="fa-solid fa-users w-5 text-center"></i> Students
             </a>
-     <a href="{{ route('admin.exams.index') }}"
-   class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.exams.*') ? 'bg-navy-800 text-white' : 'text-slate-300 hover:bg-navy-800/60 hover:text-white' }}">
-    <i class="fa-solid fa-file-circle-check w-5 text-center"></i>
-    <span>Exams & Results</span>
-</a>
-    <a href="{{ route('admin.online-classes.index') }}"
-   class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.online-classes.*') ? 'bg-navy-800 text-white' : 'text-slate-300 hover:bg-navy-800/60 hover:text-white' }}">
-    <i class="fa-solid fa-video w-5 text-center"></i>
-    <span>Online Classes</span>
-</a>
+            <a href="{{ route('admin.exams.index') }}" class="sidebar-link {{ request()->routeIs('admin.exams*') ? 'active' : '' }}">
+                <i class="fa-solid fa-file-circle-check w-5 text-center"></i> Exams & Results
+            </a>
+            <a href="{{ route('admin.online-classes.index') }}" class="sidebar-link {{ request()->routeIs('admin.online-classes*') ? 'active' : '' }}">
+                <i class="fa-solid fa-video w-5 text-center"></i> Online Classes
+            </a>
 
             <p class="text-white/30 text-xs font-semibold uppercase px-3 pt-4 pb-1 tracking-wider">Media</p>
-            <a href="{{ route('admin.gallery.index') }}"      class="sidebar-link {{ request()->routeIs('admin.gallery*') ? 'active' : '' }}">
+            <a href="{{ route('admin.gallery.index') }}" class="sidebar-link {{ request()->routeIs('admin.gallery*') ? 'active' : '' }}">
                 <i class="fa-solid fa-images w-5 text-center"></i> Gallery
             </a>
-            <a href="{{ route('admin.videos.index') }}"       class="sidebar-link {{ request()->routeIs('admin.videos*') ? 'active' : '' }}">
+            <a href="{{ route('admin.videos.index') }}" class="sidebar-link {{ request()->routeIs('admin.videos*') ? 'active' : '' }}">
                 <i class="fa-brands fa-youtube w-5 text-center"></i> Videos
             </a>
 
             <p class="text-white/30 text-xs font-semibold uppercase px-3 pt-4 pb-1 tracking-wider">Downloads</p>
-            <a href="{{ route('admin.papers.index') }}"       class="sidebar-link {{ request()->routeIs('admin.papers*') ? 'active' : '' }}">
+            <a href="{{ route('admin.papers.index') }}" class="sidebar-link {{ request()->routeIs('admin.papers*') ? 'active' : '' }}">
                 <i class="fa-solid fa-file-pdf w-5 text-center"></i> Past Papers
             </a>
-            <a href="{{ route('admin.downloads.index') }}"    class="sidebar-link {{ request()->routeIs('admin.downloads*') ? 'active' : '' }}">
+            <a href="{{ route('admin.downloads.index') }}" class="sidebar-link {{ request()->routeIs('admin.downloads*') ? 'active' : '' }}">
                 <i class="fa-solid fa-download w-5 text-center"></i> Downloads
             </a>
 
             <p class="text-white/30 text-xs font-semibold uppercase px-3 pt-4 pb-1 tracking-wider">Communication</p>
-            <a href="{{ route('admin.enquiries.index') }}"    class="sidebar-link {{ request()->routeIs('admin.enquiries*') ? 'active' : '' }}">
+            <a href="{{ route('admin.announcements.index') }}" class="sidebar-link {{ request()->routeIs('admin.announcements*') ? 'active' : '' }}">
+                <i class="fa-solid fa-bullhorn w-5 text-center"></i> Announcements
+            </a>
+            <a href="{{ route('admin.enquiries.index') }}" class="sidebar-link {{ request()->routeIs('admin.enquiries*') ? 'active' : '' }}">
                 <i class="fa-solid fa-inbox w-5 text-center"></i> Enquiries
                 @php $newEnq = \App\Models\Enquiry::where('status','new')->count(); @endphp
                 @if($newEnq > 0)
-                <span class="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ $newEnq }}</span>
+                    <span class="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ $newEnq }}</span>
                 @endif
+            </a>
+
+            {{-- SYSTEM --}}
+            <p class="text-white/30 text-xs font-semibold uppercase px-3 pt-4 pb-1 tracking-wider">System</p>
+            <a href="{{ route('admin.settings.index') }}" class="sidebar-link {{ request()->routeIs('admin.settings*') ? 'active' : '' }}">
+                <i class="fa-solid fa-gear w-5 text-center"></i> Settings
             </a>
         </nav>
 
